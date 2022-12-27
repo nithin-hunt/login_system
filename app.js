@@ -1,20 +1,16 @@
 const express = require("express");
 const mysql = require("mysql");
-const dotenv = require("dotenv");
 const path = require("path");
 const hbs = require("hbs");
 
+require("dotenv").config();
 const app = express();
 
-dotenv.config({
-    path: "./env",
-});
-
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '0232',
-    database: 'login_crud'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB
 });
 
 db.connect((e) => {
@@ -25,6 +21,7 @@ db.connect((e) => {
     }
 });
 
+// Middlewares
 app.use(express.urlencoded({extended: false}));
 
 const location = path.join(__dirname, "./public");
@@ -34,6 +31,7 @@ app.set("view engine", "hbs");
 const partialsPath = path.join(__dirname, "./views/partials");
 hbs.registerPartials(partialsPath);
 
+// ROutes
 app.use("/", require("./routes/pages"));
 app.use("/auth", require("./routes/auth"));
 
